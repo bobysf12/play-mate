@@ -28,7 +28,14 @@ class DiscussionRoom extends React.Component<Props> {
 					<Description description="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book." />
 				</AppBar>
 				<div style={{ overflowY: "auto", overflowX: "hidden", flex: 1, marginTop: 110, marginBottom: 60 }}>
-					<Comment /><Comment /><Comment /><Comment /><Comment /><Comment /><Comment /><Comment />
+					<Comment />
+					<Comment />
+					<Comment />
+					<Comment />
+					<Comment />
+					<Comment />
+					<Comment />
+					<Comment />
 				</div>
 				<CommentInput />
 			</div>
@@ -48,12 +55,12 @@ const Description: React.SFC<{ description: string }> = ({ description }) => {
 				display: "flex",
 				flexDirection: "row",
 				alignItems: "center",
-				padding: "5px 10px",
-				textOverflow: "ellipsis",
 				whiteSpace: "nowrap",
+				overflowY: "hidden",
+				overflowX: "auto",
 			}}
 		>
-			<Typography variant="body1" style={{ color: "white" }}>
+			<Typography variant="body1" style={{ color: "white", padding: "5px 10px" }}>
 				{description}
 			</Typography>
 		</div>
@@ -80,7 +87,19 @@ const Comment: React.SFC<{}> = props => {
 
 const CommentInput: React.SFC<{}> = props => {
 	return (
-		<div style={{ display: "flex", flexDirection: "row", alignItems: "flex-start", backgroundColor: "#eee", padding: 5, position: "fixed", bottom: 0, right: 0, left: 0 }}>
+		<div
+			style={{
+				display: "flex",
+				flexDirection: "row",
+				alignItems: "flex-start",
+				backgroundColor: "#eee",
+				padding: 5,
+				position: "fixed",
+				bottom: 0,
+				right: 0,
+				left: 0,
+			}}
+		>
 			<textarea
 				style={{
 					flex: 1,
