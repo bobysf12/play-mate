@@ -1,0 +1,171 @@
+import * as React from "react";
+import AppBar from "@material-ui/core/AppBar";
+import Toolbar from "@material-ui/core/Toolbar";
+import TextField from "@material-ui/core/TextField";
+import Typography from "@material-ui/core/Typography";
+import Button from "@material-ui/core/Button";
+import { IconButton } from "@material-ui/core";
+import ArrowBack from "@material-ui/icons/ArrowBack";
+import * as moment from "moment";
+import { getLocation } from "src/helpers/location";
+
+interface FormValues {
+	title: string;
+	description: string;
+	startTime: moment.Moment;
+	endTime: moment.Moment;
+	location?: {
+		lng: number;
+		lat: number;
+		detail: string;
+	};
+}
+interface Props {}
+interface State {
+	formValues: FormValues;
+}
+
+const DATE_FORMAT: string = "YYYY-MM-DD";
+class CreateRoom extends React.Component<Props, State> {
+	state: State = {
+		formValues: {
+			title: "",
+			description: "",
+			startTime: moment(),
+			endTime: moment().add(1, "hour"),
+			location: undefined,
+		},
+	};
+
+	componentDidMount() {
+		getLocation(val => {
+			this.setState({
+				formValues: {
+					...this.state.formValues,
+					location: {
+						lat: val.coords.latitude,
+						lng: val.coords.longitude,
+						detail: "",
+					},
+				},
+			});
+		});
+	}
+
+	render() {
+		const { title, description, startTime, endTime, location } = this.state.formValues;
+
+		return (
+			<div>
+				<AppBar position="static">
+					<Toolbar>
+						<IconButton color="inherit">
+							<ArrowBack />
+						</IconButton>
+						<Typography variant="title" color="inherit">
+							Host a room
+						</Typography>
+					</Toolbar>
+				</AppBar>
+				<form>
+					<div style={{ padding: 10 }}>
+						<TextField label="Title" fullWidth value={title} onChange={this.changeText("title")} />
+						<TextField
+							label="Description"
+							multiline
+							fullWidth
+							rows={3}
+							value={description}
+							onChange={this.changeText("description")}
+						/>
+						<TextField
+							label="Date"
+							type="date"
+							InputLabelProps={{
+								shrink: true,
+							}}
+							value={startTime.format(DATE_FORMAT)}
+							fullWidth
+							onChange={this.changeTime("startTime")}
+						/>
+						<TextField
+							label="start time"
+							type="time"
+							InputLabelProps={{
+								shrink: true,
+							}}
+							value={startTime.format("HH:mm")}
+							onChange={this.changeTime("startTime")}
+							fullWidth
+						/>
+						<TextField
+							label="end time"
+							type="time"
+							InputLabelProps={{
+								shrink: true,
+							}}
+							inputProps={{
+								step: 300, // 5 min
+							}}
+							value={endTime.format("HH:mm")}
+							onChange={this.changeTime("endTime")}
+							fullWidth
+						/>
+						<TextField
+							label="location"
+							type="text"
+							fullWidth
+							multiline
+							rows={3}
+							value={location && location.detail}
+						/>
+					</div>
+					<Button variant="contained" color="primary" fullWidth onClick={this.createRoom}>
+						Create
+					</Button>
+				</form>
+			</div>
+		);
+	}
+
+	changeText = (name: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+		this.setState({
+			formValues: {
+				...this.state.formValues,
+				[name]: e.currentTarget.value,
+			},
+		});
+	};
+
+	changeDate = (name: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+		const { value } = e.currentTarget;
+		const momentObj: moment.Moment = moment(value, DATE_FORMAT);
+
+		this.setState({
+			formValues: {
+				...this.state.formValues,
+				[name]: momentObj,
+			},
+		});
+	};
+
+	changeTime = (name: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+		const { value } = e.currentTarget;
+		const { startTime } = this.state.formValues;
+		const momentObj: moment.Moment = moment(`${startTime.format("DD-MM-YYYY")} ${value}`, `${DATE_FORMAT} HH:mm`);
+
+		this.setState({
+			formValues: {
+				...this.state.formValues,
+				[name]: momentObj,
+			},
+		});
+	};
+
+	createRoom = () => {
+		// tslint:disable-next-line
+		console.log(this.state.formValues);
+	};
+}
+
+export default CreateRoom;
