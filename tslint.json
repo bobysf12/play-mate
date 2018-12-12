@@ -1,18 +1,18 @@
 {
-  "extends": ["tslint:recommended", "tslint-config-standard", "tslint-react", "tslint-config-prettier"],
-  "linterOptions": {
-    "exclude": [
-      "config/**/*.js",
-      "node_modules/**/*.ts",
-      "coverage/lcov-report/*.js"
-    ]
-  },
-  "jsRules": {},
-  "rules": {
-    "ordered-imports": false,
-    "object-literal-sort-keys": false,
-    "member-ordering": false,
-    "jsx-no-lambda": false,
-    "jsx-boolean-value": false
-  }
+	"defaultSeverity": "error",
+	"extends": ["tslint:recommended", "tslint-react", "tslint-config-prettier"],
+	"linterOptions": {
+		"exclude": ["config/**/*.js", "node_modules/**/*.ts", "coverage/lcov-report/*.js"]
+	},
+	"jsRules": {},
+	"rules": {
+		"ordered-imports": false,
+		"object-literal-sort-keys": false,
+		"member-ordering": false,
+		"jsx-no-lambda": false,
+		"jsx-boolean-value": false,
+		"interface-name": false,
+		"member-access": false,
+		"no-empty-interface": false
+	}
 }
