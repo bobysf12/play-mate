@@ -2,6 +2,7 @@ import { createAction, ActionType } from "typesafe-actions";
 import { ThunkAction } from "redux-thunk";
 import { RootState } from "..";
 import { Event } from "./types";
+import { history } from "src/App";
 
 export const actions = {
 	creatingEvent: createAction("Events/creatingEvent", resolve => (event: Event) => resolve(event)),
@@ -24,6 +25,7 @@ export const createEvent = (event: Event): ThunkAction<void, RootState, any, any
 				id: Date.now().toString(),
 			};
 			dispatch(actions.eventCreated(eventWithId));
+			history.push("/events/" + eventWithId.id!);
 		}, 1000);
 	};
 };
