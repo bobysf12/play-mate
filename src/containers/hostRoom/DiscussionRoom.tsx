@@ -4,30 +4,49 @@ import { ArrowBack, Send } from "@material-ui/icons";
 import { Comment } from "src/redux/comments/types";
 import { Event } from "src/redux/events/types";
 import * as moment from "moment";
+import { RootState } from "src/redux";
+import { RouteComponentProps } from "react-router";
+import { connect } from "react-redux";
+import { getEventComments } from "src/redux/comments/selectors";
+import { addComment } from "src/redux/comments/actions";
+import createLogger from "src/helpers/logger";
 
 interface StateProps {
 	event: Event;
 	comments: Comment[];
-	isCreatingComment: boolean;
-	isLoadingComments: boolean;
+	isCreatingComment?: boolean;
+	isLoadingComments?: boolean;
 }
 interface DispatchProps {
 	sendComment: (eventId: string, text: string) => void;
 }
-interface OwnProps {}
+interface OwnProps extends RouteComponentProps<{ id: string }> {}
 interface Props extends StateProps, DispatchProps, OwnProps {}
 
 interface State {
 	commentText: string;
 }
 
+const logger = createLogger("DiscussionRoom");
 class DiscussionRoom extends React.Component<Props, State> {
 	state: State = {
 		commentText: "",
 	};
 
+	componentDidMount() {
+		if (!this.props.event) {
+			logger.warn("Event not found! Redirecting..");
+			this.props.history.push("/create-event");
+		}
+	}
+
 	render() {
 		const { comments, event } = this.props;
+
+		if (!event) {
+			return null;
+		}
+
 		const { commentText } = this.state;
 		const { title, description } = event;
 		return (
@@ -56,7 +75,7 @@ class DiscussionRoom extends React.Component<Props, State> {
 						<Comment key={comment.id} comment={comment} />
 					))}
 				</div>
-				<CommentInput value={commentText} onChangeText={this.changeComment} />
+				<CommentInput value={commentText} onChangeText={this.changeComment} onSendClick={this.sendComment} />
 			</div>
 		);
 	}
@@ -119,8 +138,9 @@ const Comment: React.SFC<{
 const CommentInput: React.SFC<{
 	value: string;
 	onChangeText: (value: string) => any;
+	onSendClick: () => any;
 }> = props => {
-	const { value, onChangeText } = props;
+	const { value, onChangeText, onSendClick } = props;
 	return (
 		<div
 			style={{
@@ -144,15 +164,38 @@ const CommentInput: React.SFC<{
 					height: 25,
 					padding: `10px 20px`,
 					fontSize: 12,
+					fontFamily: "Roboto",
 				}}
 				value={value}
 				onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => onChangeText(e.currentTarget.value)}
 			/>
-			<IconButton>
+			<IconButton onClick={onSendClick}>
 				<Send />
 			</IconButton>
 		</div>
 	);
 };
 
-export default DiscussionRoom;
+function getEvent(state: RootState, ownProps: OwnProps): Event {
+	const eventId: string = ownProps.match.params.id;
+	const event: Event = state.events.events[eventId];
+	return event;
+}
+
+function getComments(state: RootState, ownProps: OwnProps): Comment[] {
+	const event: Event = getEvent(state, ownProps);
+	if (!event) {
+		return [];
+	}
+	return getEventComments(event.id!)(state);
+}
+
+export default connect<StateProps, DispatchProps, OwnProps, RootState>(
+	(state, ownProps) => ({
+		event: getEvent(state, ownProps),
+		comments: getComments(state, ownProps),
+	}),
+	{
+		sendComment: addComment,
+	},
+)(DiscussionRoom);
