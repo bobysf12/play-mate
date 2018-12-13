@@ -36,6 +36,7 @@ interface OwnProps {}
 interface Props extends StateProps, DispatchProps, OwnProps {}
 interface State {
 	formValues: FormValues;
+	isFormValid?: boolean;
 }
 
 const logger = createLogger("CreateRoom");
@@ -86,8 +87,19 @@ class CreateRoom extends React.Component<Props, State> {
 				</AppBar>
 				<form>
 					<div style={{ padding: 10 }}>
-						<TextField label="Title" fullWidth value={title} onChange={this.changeText("title")} />
 						<TextField
+							InputLabelProps={{
+								shrink: true,
+							}}
+							label="Title"
+							fullWidth
+							value={title}
+							onChange={this.changeText("title")}
+						/>
+						<TextField
+							InputLabelProps={{
+								shrink: true,
+							}}
 							label="Description"
 							multiline
 							fullWidth
@@ -130,6 +142,9 @@ class CreateRoom extends React.Component<Props, State> {
 						/>
 						{/* TODO: Open map to get longitude latitude and address */}
 						<TextField
+							InputLabelProps={{
+								shrink: true,
+							}}
 							label="location"
 							type="text"
 							fullWidth
@@ -138,6 +153,9 @@ class CreateRoom extends React.Component<Props, State> {
 							value={location && location.detail}
 						/>
 						<TextField
+							InputLabelProps={{
+								shrink: true,
+							}}
 							type="number"
 							label="Max person"
 							fullWidth
@@ -200,6 +218,14 @@ class CreateRoom extends React.Component<Props, State> {
 	createRoom = () => {
 		// tslint:disable-next-line
 		logger.debug(this.state.formValues);
+		const inValidForm: boolean = Object.keys(this.state.formValues)
+			.map(k => this.state.formValues[k])
+			.some(value => !value);
+
+		if (inValidForm) {
+			alert("Please fill all fields!");
+			return;
+		}
 
 		const { createEventRoom } = this.props;
 		const { title, description, startTime, endTime, location, maxPerson } = this.state.formValues;

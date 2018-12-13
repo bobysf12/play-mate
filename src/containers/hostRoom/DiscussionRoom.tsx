@@ -86,6 +86,7 @@ class DiscussionRoom extends React.Component<Props, State> {
 		const { sendComment, event } = this.props;
 		const { commentText } = this.state;
 		sendComment(event.id!, commentText);
+		this.setState({ commentText: "" });
 	};
 }
 
@@ -117,6 +118,7 @@ const Comment: React.SFC<{
 	comment: Comment;
 }> = props => {
 	const { comment } = props;
+	const headerStyle: any = { fontSize: 10, color: "grey" };
 	return (
 		<Paper style={{ margin: "5px", padding: 10 }}>
 			<div
@@ -124,13 +126,20 @@ const Comment: React.SFC<{
 					display: "flex",
 					flexDirection: "row",
 					justifyContent: "space-between",
+					marginBottom: 5,
 				}}
 			>
 				{/* FIXME: add User to props */}
-				<Typography variant="body1">Name</Typography>
-				<Typography variant="body1">{moment(comment.created_at).format("HH:mm")}</Typography>
+				<Typography style={headerStyle} variant="body1">
+					Name
+				</Typography>
+				<Typography style={headerStyle} variant="body1">
+					{moment(comment.created_at).format("HH:mm")}
+				</Typography>
 			</div>
-			<Typography paragraph>{comment.text}</Typography>
+			<Typography paragraph style={{ whiteSpace: "pre-line" }}>
+				{comment.text}
+			</Typography>
 		</Paper>
 	);
 };
