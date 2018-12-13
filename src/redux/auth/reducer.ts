@@ -4,6 +4,7 @@ import { getType } from "typesafe-actions";
 
 const initialState: AuthState = {
 	isLoggingIn: false,
+	isRegistering: false,
 	loggedInUserId: undefined,
 	token: undefined,
 };
@@ -30,6 +31,16 @@ export default function reducer(state: AuthState = initialState, action: AuthAct
 				isLoggingIn: false,
 			};
 
+		case getType(actions.registering):
+			return {
+				...state,
+				isRegistering: true,
+			};
+		case getType(actions.registered):
+			return {
+				...state,
+				isRegistering: false,
+			};
 		default:
 			return state;
 	}

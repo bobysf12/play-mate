@@ -3,19 +3,20 @@ import { Paper, TextField, Button, Typography } from "@material-ui/core";
 import Container from "src/components/Container";
 import { connect } from "react-redux";
 import { RootState } from "src/redux";
-import { login } from "src/redux/auth/actions";
+import { register } from "src/redux/auth/actions";
 import { history } from "src/App";
 
 interface FormValues {
 	username: string;
 	password: string;
+	name: string;
 }
 
 interface StateProps {
-	isLoggingIn?: boolean;
+	isRegistering?: boolean;
 }
 interface DispatchProps {
-	login: (username: string, password: string) => void;
+	register: (username: string, password: string, name: string) => void;
 }
 interface OwnProps {}
 interface Props extends StateProps, DispatchProps, OwnProps {}
@@ -23,17 +24,18 @@ interface State {
 	formValues: FormValues;
 }
 
-class Login extends React.Component<Props, State> {
+class Register extends React.Component<Props, State> {
 	state: State = {
 		formValues: {
 			username: "",
 			password: "",
+			name: "",
 		},
 	};
 
 	render() {
-		const { isLoggingIn } = this.props;
-		const { username, password } = this.state.formValues;
+		const { isRegistering } = this.props;
+		const { username, password, name } = this.state.formValues;
 		return (
 			<Container
 				style={{
@@ -50,8 +52,16 @@ class Login extends React.Component<Props, State> {
 				</div>
 				<div>
 					<Paper style={{ padding: 10 }}>
-						<Typography variant="subheading">Login</Typography>
+						<Typography variant="subheading">Register</Typography>
 						<div style={{ marginBottom: 10, marginTop: 10 }}>
+							<TextField
+								label="Name"
+								type="text"
+								value={name}
+								fullWidth
+								InputLabelProps={{ shrink: true }}
+								onChange={this.changeText("name")}
+							/>
 							<TextField
 								label="Username"
 								type="text"
@@ -74,19 +84,19 @@ class Login extends React.Component<Props, State> {
 							color="primary"
 							fullWidth
 							onClick={this.login}
-							disabled={isLoggingIn}
+							disabled={isRegistering}
 						>
-							Login
+							Register
 						</Button>
 					</Paper>
 					<Button
 						variant="text"
 						color="secondary"
 						fullWidth
-						onClick={this.goToRegister}
-						disabled={isLoggingIn}
+						onClick={this.goToLogin}
+						disabled={isRegistering}
 					>
-						Register
+						Login
 					</Button>
 				</div>
 			</Container>
@@ -104,22 +114,22 @@ class Login extends React.Component<Props, State> {
 
 	login = () => {
 		// tslint:disable-next-line
-		const { login } = this.props;
-		const { username, password } = this.state.formValues;
+		const { register } = this.props;
+		const { username, password, name } = this.state.formValues;
 
-		login(username, password);
+		register(username, password, name);
 	};
 
-	goToRegister = () => {
-		history.push("/register");
+	goToLogin = () => {
+		history.push("/login");
 	};
 }
 
 export default connect<StateProps, DispatchProps, OwnProps, RootState>(
 	state => ({
-		isLoggingIn: state.auth.isLoggingIn,
+		isRegistering: state.auth.isRegistering,
 	}),
 	{
-		login,
+		register,
 	},
-)(Login);
+)(Register);
