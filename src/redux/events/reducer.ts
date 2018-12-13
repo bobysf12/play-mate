@@ -53,6 +53,19 @@ export default function reducer(state: EventsState = initialState, action: Event
             };
         }
 
+        case getType(actions.eventsLoaded): {
+            const newEvents = action.payload.reduce((events, event) => {
+                return {
+                    ...events,
+                    [event.id!]: event,
+                };
+            }, state.events);
+            return {
+                ...state,
+                events: newEvents,
+            };
+        }
+
         default:
             return state;
     }

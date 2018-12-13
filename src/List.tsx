@@ -2,7 +2,7 @@ import * as React from "react";
 import { connect } from "react-redux";
 import { withScriptjs, withGoogleMap, GoogleMap, Marker, InfoWindow } from "react-google-maps";
 
-import { actions } from "src/redux/events/actions";
+import { actions, loadEvents } from "src/redux/events/actions";
 import { Typography, Fab, Paper, Button } from "@material-ui/core";
 import { Add } from "@material-ui/icons";
 import Container from "./components/Container";
@@ -81,7 +81,9 @@ interface State {
 interface StateProps {
     events: Event[];
 }
-interface DispatchProps {}
+interface DispatchProps {
+    loadEvents: () => void;
+}
 interface OwnProps {}
 interface Props extends StateProps, DispatchProps, OwnProps {}
 
@@ -95,6 +97,10 @@ class MyFancyComponent extends React.PureComponent<Props, State> {
         showList: false,
         infoWindowId: "",
     };
+
+    componentDidMount() {
+        this.props.loadEvents();
+    }
 
     render() {
         const { events } = this.props;
@@ -170,9 +176,14 @@ function getEvents(state: RootState): Event[] {
     return Object.keys(state.events.events).map(k => state.events.events[k]);
 }
 
-export default connect<StateProps, DispatchProps, OwnProps, RootState>((state, ownProps) => ({
-    events: getEvents(state),
-}))(MyFancyComponent);
+export default connect<StateProps, DispatchProps, OwnProps, RootState>(
+    (state, ownProps) => ({
+        events: getEvents(state),
+    }),
+    {
+        loadEvents,
+    },
+)(MyFancyComponent);
 
 const ListView: React.SFC<{ hideListView: () => void; events: Event[]; onClickEvent: (event: Event) => void }> = ({
     hideListView,
