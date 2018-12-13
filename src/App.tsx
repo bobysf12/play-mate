@@ -22,8 +22,8 @@ class App extends React.Component {
                         <Route path="/login" component={Login} />
                         <Route path="/register" component={Register} />
                         {/* TODO: @agung add your event view here */}
-                        <Route path="/events" component={List} />
                         <Route path="/events/:id" component={DiscussionRoom} />
+                        <Route path="/events" component={List} />
                         <Route path="/create-event" component={CreateRoom} />
                         <Redirect to="/login" />
                     </Switch>
