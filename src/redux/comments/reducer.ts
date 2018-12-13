@@ -38,7 +38,7 @@ export default function reducer(state: CommentsState = initialState, action: Com
 				...state,
 				[eventId]: {
 					...state[eventId],
-					isLoadingComment: true,
+					isLoadingComments: true,
 				},
 			};
 		}
@@ -57,7 +57,7 @@ export default function reducer(state: CommentsState = initialState, action: Com
 				...state,
 				[eventId]: {
 					...state[eventId],
-					isLoadingComment: false,
+					isLoadingComments: false,
 					commentsMap: newCommentsMap,
 				},
 			};

@@ -12,7 +12,7 @@ interface CommentState {
 	 */
 	commentsMap: Record<string, Comment>;
 	isCreatingComment: boolean;
-	isLoadingComment: boolean;
+	isLoadingComments: boolean;
 }
 
 export type CommentsState = Record<string, CommentState>;
