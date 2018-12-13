@@ -21,7 +21,7 @@ export interface Event {
 	end_time: Date;
 	location: EventLocation;
 	max_person: number;
-	participants: User[];
+	participants?: User[];
 }
 
 export interface EventsState {
