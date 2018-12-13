@@ -1,9 +1,15 @@
 import { createStore, Reducer, combineReducers, applyMiddleware, compose } from "redux";
 import thunk from "redux-thunk";
 
-export interface RootState {}
+import commentsReducer from "./comments/reducer";
 
-const reducers: Reducer<RootState> = combineReducers<RootState>({});
+export interface RootState {
+	comments: ReturnType<typeof commentsReducer>;
+}
+
+const reducers: Reducer<RootState> = combineReducers<RootState>({
+	comments: commentsReducer,
+});
 let middleware = null;
 
 // Enable Redux Tools support only in Developer's build.
