@@ -16,7 +16,7 @@ export interface Event {
     max_person: number;
     participants?: User[];
     status?: EventStatus;
-    creator_id?: number;
+    creator_id?: string;
 }
 
 export enum EventStatus {

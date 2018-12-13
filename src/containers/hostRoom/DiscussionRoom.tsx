@@ -17,6 +17,7 @@ interface StateProps {
     comments: Comment[];
     isCreatingComment?: boolean;
     isLoadingComments?: boolean;
+    isEventOwner: boolean;
 }
 interface DispatchProps {
     sendComment: (eventId: string, text: string) => void;
@@ -45,7 +46,7 @@ class DiscussionRoom extends React.Component<Props, State> {
     }
 
     render() {
-        const { comments, event } = this.props;
+        const { comments, event, isEventOwner } = this.props;
 
         if (!event) {
             return null;
@@ -69,7 +70,15 @@ class DiscussionRoom extends React.Component<Props, State> {
                         >
                             {title}
                         </Typography>
-                        <Button color="inherit">Join</Button>
+                        {isEventOwner ? (
+                            <Button color="inherit" onClick={this.closeEvent}>
+                                Close
+                            </Button>
+                        ) : (
+                            <Button color="inherit" onClick={this.closeEvent}>
+                                Join
+                            </Button>
+                        )}
                     </Toolbar>
 
                     <Description description={description} />
@@ -95,6 +104,14 @@ class DiscussionRoom extends React.Component<Props, State> {
 
     goBack = () => {
         history.push("/events");
+    };
+
+    closeEvent = () => {
+        logger.warn("Implement close event");
+    };
+
+    joinEvent = () => {
+        logger.warn("Implement join event");
     };
 }
 
@@ -208,10 +225,24 @@ function getComments(state: RootState, ownProps: OwnProps): Comment[] {
     return getEventComments(event.id!)(state);
 }
 
+function getIsEventOwner(state: RootState, ownProps: OwnProps): boolean {
+    const event = getEvent(state, ownProps);
+
+    if (!event || !state.auth.loggedInUserId) {
+        return false;
+    }
+
+    if (state.auth.loggedInUserId! === event.creator_id!) {
+        return true;
+    }
+    return false;
+}
+
 export default connect<StateProps, DispatchProps, OwnProps, RootState>(
     (state, ownProps) => ({
         event: getEvent(state, ownProps),
         comments: getComments(state, ownProps),
+        isEventOwner: getIsEventOwner(state, ownProps),
     }),
     {
         sendComment: addComment,
