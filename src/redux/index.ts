@@ -2,12 +2,15 @@ import { createStore, Reducer, combineReducers, applyMiddleware, compose } from 
 import thunk from "redux-thunk";
 
 import commentsReducer from "./comments/reducer";
+import eventsReducer from "./events/reducer";
 
 export interface RootState {
+	events: ReturnType<typeof eventsReducer>;
 	comments: ReturnType<typeof commentsReducer>;
 }
 
 const reducers: Reducer<RootState> = combineReducers<RootState>({
+	events: eventsReducer,
 	comments: commentsReducer,
 });
 let middleware = null;
