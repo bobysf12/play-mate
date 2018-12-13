@@ -47,7 +47,9 @@ class CreateRoom extends React.Component<Props, State> {
 		formValues: {
 			title: "",
 			description: "",
+			// @ts-ignore
 			startTime: moment(),
+			// @ts-ignore
 			endTime: moment().add(1, "hour"),
 			location: undefined,
 			maxPerson: 10,
@@ -188,6 +190,7 @@ class CreateRoom extends React.Component<Props, State> {
 
 	changeDate = (name: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
 		const { value } = e.currentTarget;
+		// @ts-ignore
 		const momentObj: moment.Moment = moment(value, DATE_FORMAT);
 
 		this.setState({
@@ -202,6 +205,7 @@ class CreateRoom extends React.Component<Props, State> {
 		const { value } = e.currentTarget;
 		logger.debug(value);
 		const { startTime } = this.state.formValues;
+		// @ts-ignore
 		const momentObj: moment.Moment = moment(
 			`${startTime.format(DATE_FORMAT)} ${value}`,
 			`${DATE_FORMAT} ${TIME_FORMAT}`,

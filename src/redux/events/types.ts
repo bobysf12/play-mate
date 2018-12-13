@@ -35,4 +35,13 @@ export enum EventStatus {
 export interface EventsState {
 	events: Record<string, Event>;
 	isCreatingEvent: boolean;
+	haveFetch: {
+		[name: string]: boolean;
+	};
+	box: {
+		nlat: number;
+		slat: number;
+		elong: number;
+		wlong: number;
+	}
 }

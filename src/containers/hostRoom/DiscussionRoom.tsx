@@ -134,7 +134,10 @@ const Comment: React.SFC<{
 					Name
 				</Typography>
 				<Typography style={headerStyle} variant="body1">
-					{moment(comment.created_at).format("HH:mm")}
+					{
+						// @ts-ignore
+						moment(comment.created_at).format("HH:mm")
+					}
 				</Typography>
 			</div>
 			<Typography paragraph style={{ whiteSpace: "pre-line" }}>

@@ -17,6 +17,7 @@
     "importHelpers": true,
     "strictNullChecks": true,
     "suppressImplicitAnyIndexErrors": true,
+    "esModuleInterop": true,
     "noUnusedLocals": true
   },
   "exclude": [
