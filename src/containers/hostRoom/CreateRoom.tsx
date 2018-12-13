@@ -40,6 +40,7 @@ interface State {
 
 const logger = createLogger("CreateRoom");
 const DATE_FORMAT: string = "YYYY-MM-DD";
+const TIME_FORMAT: string = "HH:mm";
 class CreateRoom extends React.Component<Props, State> {
 	state: State = {
 		formValues: {
@@ -110,7 +111,7 @@ class CreateRoom extends React.Component<Props, State> {
 							InputLabelProps={{
 								shrink: true,
 							}}
-							value={startTime.format("HH:mm")}
+							value={startTime.format(TIME_FORMAT)}
 							onChange={this.changeTime("startTime")}
 							fullWidth
 						/>
@@ -123,7 +124,7 @@ class CreateRoom extends React.Component<Props, State> {
 							inputProps={{
 								step: 300, // 5 min
 							}}
-							value={endTime.format("HH:mm")}
+							value={endTime.format(TIME_FORMAT)}
 							onChange={this.changeTime("endTime")}
 							fullWidth
 						/>
@@ -183,7 +184,10 @@ class CreateRoom extends React.Component<Props, State> {
 		const { value } = e.currentTarget;
 		logger.debug(value);
 		const { startTime } = this.state.formValues;
-		const momentObj: moment.Moment = moment(`${startTime.format(DATE_FORMAT)} ${value}`, `${DATE_FORMAT} HH:mm`);
+		const momentObj: moment.Moment = moment(
+			`${startTime.format(DATE_FORMAT)} ${value}`,
+			`${DATE_FORMAT} ${TIME_FORMAT}`,
+		);
 
 		this.setState({
 			formValues: {
