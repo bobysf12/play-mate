@@ -22,8 +22,8 @@ export interface Event {
 	location: EventLocation;
 	max_person: number;
 	participants?: User[];
-	status: EventStatus;
-	creator_id: number;
+	status?: EventStatus;
+	creator_id?: number;
 }
 
 export enum EventStatus {

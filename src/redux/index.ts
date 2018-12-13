@@ -1,15 +1,18 @@
 import { createStore, Reducer, combineReducers, applyMiddleware, compose } from "redux";
 import thunk from "redux-thunk";
 
+import authReducer from "./auth/reducer";
 import commentsReducer from "./comments/reducer";
 import eventsReducer from "./events/reducer";
 
 export interface RootState {
+	auth: ReturnType<typeof authReducer>;
 	events: ReturnType<typeof eventsReducer>;
 	comments: ReturnType<typeof commentsReducer>;
 }
 
 const reducers: Reducer<RootState> = combineReducers<RootState>({
+	auth: authReducer,
 	events: eventsReducer,
 	comments: commentsReducer,
 });
