@@ -8,7 +8,7 @@ import { RootState } from "src/redux";
 import { RouteComponentProps } from "react-router";
 import { connect } from "react-redux";
 import { getEventComments } from "src/redux/comments/selectors";
-import { addComment } from "src/redux/comments/actions";
+import { addComment, loadComments } from "src/redux/comments/actions";
 import createLogger from "src/helpers/logger";
 import { history } from "src/App";
 
@@ -20,6 +20,7 @@ interface StateProps {
 }
 interface DispatchProps {
     sendComment: (eventId: string, text: string) => void;
+    loadComments: (eventId: string) => void;
 }
 interface OwnProps extends RouteComponentProps<{ id: string }> {}
 interface Props extends StateProps, DispatchProps, OwnProps {}
@@ -37,8 +38,10 @@ class DiscussionRoom extends React.Component<Props, State> {
     componentDidMount() {
         if (!this.props.event) {
             logger.warn("Event not found! Redirecting..");
-            this.props.history.push("/create-event");
+            this.props.history.push("/events");
+            return;
         }
+        this.props.loadComments(this.props.match.params.id);
     }
 
     render() {
@@ -136,7 +139,7 @@ const Comment: React.SFC<{
             >
                 {/* FIXME: add User to props */}
                 <Typography style={headerStyle} variant="body1">
-                    Name
+                    {comment.user!.username}
                 </Typography>
                 <Typography style={headerStyle} variant="body1">
                     {// @ts-ignore
@@ -212,5 +215,6 @@ export default connect<StateProps, DispatchProps, OwnProps, RootState>(
     }),
     {
         sendComment: addComment,
+        loadComments,
     },
 )(DiscussionRoom);

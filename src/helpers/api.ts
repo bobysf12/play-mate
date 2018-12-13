@@ -1,6 +1,6 @@
 import { Event } from "src/redux/events/types";
 import moment from "moment";
-import { Comment } from "src/redux/comments/types";
+import { CommentType } from "src/redux/comments/types";
 
 function getUrl(endpoint: string) {
     return `http://api.socionomad.com${endpoint}`;
@@ -53,10 +53,10 @@ function createEvent(event: Event) {
 
 function getEvents() {
     const startTime: string = moment()
-        .startOf("day")
+        .startOf("month")
         .toISOString();
     const endTime: string = moment()
-        .endOf("day")
+        .endOf("month")
         .toISOString();
     const latitude: number = -6.874466;
     const longitude: number = 107.590251;
@@ -64,7 +64,7 @@ function getEvents() {
     return fetch(
         `${getUrl(
             "/event/list",
-        )}?start_time=${startTime}&end_time=${endTime}&longitude=${longitude}&latitude=${latitude}`,
+        )}?start_time=${startTime}&end_time=${endTime}&longitude=${longitude}&latitude=${latitude}&distance=20000`,
         {
             method: "GET",
             headers: getHeaders(),
@@ -79,12 +79,12 @@ function getComments(eventId: string) {
     }).then(res => res.json());
 }
 
-function sendComment(eventId: string, comment: Comment) {
+function sendComment(eventId: string, comment: string) {
     return fetch(getUrl(`/event/${eventId}/comment/send`), {
         method: "POST",
         body: JSON.stringify({
-            text: comment.text,
-            type: comment.type,
+            text: comment,
+            type: CommentType.CHAT,
         }),
         headers: getHeaders(),
     }).then(res => res.json());
