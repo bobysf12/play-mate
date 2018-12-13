@@ -8,6 +8,11 @@ import { IconButton } from "@material-ui/core";
 import ArrowBack from "@material-ui/icons/ArrowBack";
 import * as moment from "moment";
 import { getLocation } from "src/helpers/location";
+import { Event } from "src/redux/events/types";
+import createLogger from "src/helpers/logger";
+import { connect } from "react-redux";
+import { RootState } from "src/redux";
+import { createEvent } from "src/redux/events/actions";
 
 interface FormValues {
 	title: string;
@@ -19,12 +24,21 @@ interface FormValues {
 		lat: number;
 		detail: string;
 	};
+	maxPerson: number;
 }
-interface Props {}
+interface StateProps {
+	isCreatingEvent: boolean;
+}
+interface DispatchProps {
+	createEventRoom: (event: Event) => void;
+}
+interface OwnProps {}
+interface Props extends StateProps, DispatchProps, OwnProps {}
 interface State {
 	formValues: FormValues;
 }
 
+const logger = createLogger("CreateRoom");
 const DATE_FORMAT: string = "YYYY-MM-DD";
 class CreateRoom extends React.Component<Props, State> {
 	state: State = {
@@ -34,6 +48,7 @@ class CreateRoom extends React.Component<Props, State> {
 			startTime: moment(),
 			endTime: moment().add(1, "hour"),
 			location: undefined,
+			maxPerson: 10,
 		},
 	};
 
@@ -53,7 +68,8 @@ class CreateRoom extends React.Component<Props, State> {
 	}
 
 	render() {
-		const { title, description, startTime, endTime, location } = this.state.formValues;
+		const { isCreatingEvent } = this.props;
+		const { title, description, startTime, endTime, location, maxPerson } = this.state.formValues;
 
 		return (
 			<div>
@@ -111,6 +127,7 @@ class CreateRoom extends React.Component<Props, State> {
 							onChange={this.changeTime("endTime")}
 							fullWidth
 						/>
+						{/* TODO: Open map to get longitude latitude and address */}
 						<TextField
 							label="location"
 							type="text"
@@ -119,8 +136,21 @@ class CreateRoom extends React.Component<Props, State> {
 							rows={3}
 							value={location && location.detail}
 						/>
+						<TextField
+							type="number"
+							label="Max person"
+							fullWidth
+							value={maxPerson}
+							onChange={this.changeText("maxPerson")}
+						/>
 					</div>
-					<Button variant="contained" color="primary" fullWidth onClick={this.createRoom}>
+					<Button
+						disabled={isCreatingEvent}
+						variant="contained"
+						color="primary"
+						fullWidth
+						onClick={this.createRoom}
+					>
 						Create
 					</Button>
 				</form>
@@ -151,8 +181,9 @@ class CreateRoom extends React.Component<Props, State> {
 
 	changeTime = (name: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
 		const { value } = e.currentTarget;
+		logger.debug(value);
 		const { startTime } = this.state.formValues;
-		const momentObj: moment.Moment = moment(`${startTime.format("DD-MM-YYYY")} ${value}`, `${DATE_FORMAT} HH:mm`);
+		const momentObj: moment.Moment = moment(`${startTime.format(DATE_FORMAT)} ${value}`, `${DATE_FORMAT} HH:mm`);
 
 		this.setState({
 			formValues: {
@@ -164,8 +195,33 @@ class CreateRoom extends React.Component<Props, State> {
 
 	createRoom = () => {
 		// tslint:disable-next-line
-		console.log(this.state.formValues);
+		logger.debug(this.state.formValues);
+
+		const { createEventRoom } = this.props;
+		const { title, description, startTime, endTime, location, maxPerson } = this.state.formValues;
+
+		const event: Event = {
+			title,
+			description,
+			start_time: startTime.toDate(),
+			end_time: endTime.toDate(),
+			max_person: maxPerson,
+			location: {
+				latitude: location!.lat,
+				longitude: location!.lng,
+				detail: location!.detail,
+			},
+		};
+
+		createEventRoom(event);
 	};
 }
 
-export default CreateRoom;
+export default connect<StateProps, DispatchProps, OwnProps, RootState>(
+	(state, ownProps) => ({
+		isCreatingEvent: state.events.isCreatingEvent,
+	}),
+	{
+		createEventRoom: createEvent,
+	},
+)(CreateRoom);
