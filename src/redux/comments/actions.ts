@@ -1,7 +1,7 @@
 import { createAction, ActionType } from "typesafe-actions";
 import { RootState } from "..";
 import { ThunkAction } from "redux-thunk";
-import { Comment } from "./types";
+import { Comment, CommentType } from "./types";
 
 export const actions = {
 	loadingComments: createAction("Comments/loadingComments", resolve => (eventId: string) => resolve({ eventId })),
@@ -32,12 +32,22 @@ export const loadComments = (eventId: string): ThunkAction<void, RootState, any,
 	};
 };
 
-export const addComment = (eventId: string, comment: Comment): ThunkAction<void, RootState, any, any> => {
+export const addComment = (eventId: string, text: string): ThunkAction<void, RootState, any, any> => {
 	return (dispatch, getState) => {
-		dispatch(actions.addingComment(eventId, comment));
+		// FIXME: Add user auth state
+		const userId: string = "123";
+
+		const commentData: Comment = {
+			user_id: userId,
+			created_at: new Date(),
+			text,
+			type: CommentType.CHAT,
+		};
+
+		dispatch(actions.addingComment(eventId, commentData));
 		setTimeout(() => {
 			const commentWithId: Comment = {
-				...comment,
+				...commentData,
 				id: Date.now().toString(),
 			};
 			dispatch(actions.commentAdded(eventId, commentWithId));

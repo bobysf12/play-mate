@@ -1,9 +1,9 @@
 export interface Comment {
 	id?: string;
 	text: string;
-	type: string;
+	type: CommentType;
 	created_at: Date;
-	user_id: number;
+	user_id: string;
 }
 
 interface CommentState {
@@ -16,3 +16,8 @@ interface CommentState {
 }
 
 export type CommentsState = Record<string, CommentState>;
+
+export enum CommentType {
+	CHAT = "chat",
+	LOG = "log",
+}
