@@ -1,23 +1,28 @@
 import * as React from "react";
+import { Router, Redirect, Route, Switch } from "react-router-dom";
+import { createBrowserHistory } from "history";
 import "./App.css";
 
-import logo from "./logo.svg";
 import { Provider } from "react-redux";
 import store from "./redux";
+import CreateRoom from "./containers/hostRoom/CreateRoom";
+import DiscussionRoom from "./containers/hostRoom/DiscussionRoom";
+
+export const history = createBrowserHistory();
 
 class App extends React.Component {
 	public render() {
 		return (
 			<Provider store={store}>
-				<div className="App">
-					<header className="App-header">
-						<img src={logo} className="App-logo" alt="logo" />
-						<h1 className="App-title">Welcome to React</h1>
-					</header>
-					<p className="App-intro">
-						To get started, edit <code>src/App.tsx</code> and save to reload.
-					</p>
-				</div>
+				<Router history={history}>
+					<Switch>
+						{/* TODO: @agung add your event view here */}
+						{/* <Route path="/events" component={Event} /> */}
+						<Route path="/events/:id" component={DiscussionRoom} />
+						<Route path="/create-event" component={CreateRoom} />
+						<Redirect to="/create-event" />
+					</Switch>
+				</Router>
 			</Provider>
 		);
 	}
